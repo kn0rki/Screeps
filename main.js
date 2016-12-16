@@ -10,9 +10,13 @@ module.exports.loop = function () {
     }
 
     var numCreeps = Game.spawns["Spawn1"].room.find(FIND_MY_CREEPS);
+    //console.log("Creep Anzahl " + numCreeps.length);
 
+     if(numCreeps.length < 5) {
+            //console.log("Creating new Harvester");
             Game.spawns["Spawn1"].createCreep([WORK, CARRY, MOVE], null, {role: "harvester"});
         } else {
+           // console.log("test");
     }
 
     for(var name in Game.creeps) {
