@@ -1,3 +1,4 @@
+var roleRepairer = require('role.repairer');
 module.exports = {
     // a function to run the logic for this role
     run: function (creep) {
@@ -14,33 +15,80 @@ module.exports = {
 
         // if creep is supposed to transfer energy to the spawn or an extension
         if (creep.memory.working == true) {
+            //console.log(creep.name + " else");
+            //find closest container which is not full
+            var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (c) => c.structureType == STRUCTURE_CONTAINER
+            });
+           
             // find closest spawn or extension which is not full
             var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                 // the second argument for findClosestByPath is an object which takes
                 // a property called filter which can be a function
                 // we use the arrow operator to define it
-                filter: (s) => (s.structureType == STRUCTURE_SPAWN
+                filter: (s) => ((s.structureType == STRUCTURE_SPAWN
                              || s.structureType == STRUCTURE_EXTENSION)
-                             && s.energy < s.energyCapacity
+                             && s.energy < s.energyCapacity)
             });
 
+                      
             // if we found one
             if (structure != undefined) {
                 // try to transfer energy, if it is not in range
                 if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     // move towards it
                     creep.moveTo(structure);
+                    //console.log(creep.name + " bring to spawn/ext");
                 }
+            } else if (containers != undefined) {
+                console.log(creep.name + ": container found");
+                if (creep.transfer(containers, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    // move towards it
+                    creep.moveTo(containers);
+                    console.log(creep.name + ": bring to container");
+                }
+               
+            } else {
+                roleRepairer.run(creep);
+                console.log(creep.name + ":  idle");
             }
         }
-            // if creep is supposed to harvest energy from source
+           
         else {
-            // find closest source
-            var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-            // try to harvest energy, if the source is not in range
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                // move towards the source
-                creep.moveTo(source);
+
+            // find dropped energy in the room and pickup rather than from source (in case a creep dies somewhere in the room)
+            var droppedResources = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
+            // use energy containers before source
+            var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (s) => s.structureType == STRUCTURE_CONTAINER
+                            && s.store[RESOURCE_ENERGY] < s.storageCapacity
+            });
+
+            if (droppedResources != undefined) {
+                //console.log(creep.name + ":" + creep.memory.role + " founds dropped energy");
+                if (creep.pickup(droppedResources) == ERR_NOT_IN_RANGE) {
+                    // move towards the source
+                    creep.moveTo(droppedResources);
+                }
+                //if any containers found
+            } /*else if (containers != undefined) {
+            //should the harvester pickup from containers to spawn/ext?
+                console.log(creep.name + " pickup from container");
+                if(creep.withdraw(containers, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(containers);
+                }
+                
+            }*/ else {
+                //console.log(creep.name + ":" + creep.memory.role + ": harvests from source");
+                // if creep is supposed to harvest energy from source
+                //console.log("Drop res is undefined");
+                // find closest source
+                var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+                // try to harvest energy, if the source is not in range
+                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    // move towards the source
+                    creep.moveTo(source);
+                }
             }
         }
     }

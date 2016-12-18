@@ -6,6 +6,7 @@ var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
 
 module.exports.loop = function () {
+       
     // check for memory entries of died creeps by iterating over Memory.creeps
     for (let name in Memory.creeps) {
         // and checking if the creep is still alive
@@ -35,13 +36,23 @@ module.exports.loop = function () {
         else if (creep.memory.role == 'repairer') {
             roleRepairer.run(creep);
         }
+
+
+
+        var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (c) => c.structureType == STRUCTURE_CONTAINER
+                            && (_.sum(c.store)) < c.storageCapacity
+        });
+        for (let foo in containers) {
+            console.log(_.sum(foo.store + "/" + foo.storageCapacity));
+        };
     }
 
     // setup some minimum numbers for different roles
     var minimumNumberOfHarvesters = 5;
-    var minimumNumberOfUpgraders = 2;
-    var minimumNumberOfBuilders = 2;
-    var minimumNumberOfRepairers = 2;
+    var minimumNumberOfUpgraders = 1;
+    var minimumNumberOfBuilders = 1;
+    var minimumNumberOfRepairers = 1;
 
     // count the number of creeps alive for each role
     // _.sum will count the number of properties in Game.creeps filtered by the
@@ -81,14 +92,14 @@ module.exports.loop = function () {
         // try to spawn one
         name = Game.spawns.Spawn1.createCustomCreep(energy, 'builder');
     }
-    else {
+    //else {
         // else try to spawn a builder
-        name = Game.spawns.Spawn1.createCustomCreep(energy, 'builder');
-    }
+      //  name = Game.spawns.Spawn1.createCustomCreep(energy, 'builder');
+    //}
 
     // print name to console if spawning was a success
     // name > 0 would not work since string > 0 returns false
-    if (!(name < 0)) {
-        console.log("Spawned new creep: " + name);
-    }
+    //if (!(name < 0)) {
+      //  console.log("Spawned new creep: " + name);
+    //}
 };

@@ -16,6 +16,8 @@ module.exports = function() {
             }
 
             // create creep with the created body and the given role
-            return this.createCreep(body, undefined, { role: roleName, working: false });
+            var id = Math.floor((Math.random() * 1000) + 1);
+            var name = roleName + '-' + id;
+            return this.createCreep(body, name, { role: roleName, working: false });
         };
 };
