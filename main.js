@@ -4,9 +4,11 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
+var roleTower   = require('tower');
 
 module.exports.loop = function () {
-       
+
+    roleTower.run("E72S39");
     // check for memory entries of died creeps by iterating over Memory.creeps
     for (let name in Memory.creeps) {
         // and checking if the creep is still alive
@@ -49,8 +51,8 @@ module.exports.loop = function () {
     }
 
     // setup some minimum numbers for different roles
-    var minimumNumberOfHarvesters = 5;
-    var minimumNumberOfUpgraders = 1;
+    var minimumNumberOfHarvesters = 4;
+    var minimumNumberOfUpgraders = 4;
     var minimumNumberOfBuilders = 1;
     var minimumNumberOfRepairers = 1;
 

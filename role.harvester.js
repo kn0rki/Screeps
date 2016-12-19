@@ -20,18 +20,19 @@ module.exports = {
             var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (c) => c.structureType == STRUCTURE_CONTAINER
             });
-           
+
             // find closest spawn or extension which is not full
             var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                 // the second argument for findClosestByPath is an object which takes
                 // a property called filter which can be a function
                 // we use the arrow operator to define it
                 filter: (s) => ((s.structureType == STRUCTURE_SPAWN
-                             || s.structureType == STRUCTURE_EXTENSION)
+                             || s.structureType == STRUCTURE_EXTENSION
+                             || s.structureType == STRUCTURE_TOWER)
                              && s.energy < s.energyCapacity)
             });
 
-                      
+
             // if we found one
             if (structure != undefined) {
                 // try to transfer energy, if it is not in range
@@ -47,13 +48,13 @@ module.exports = {
                     creep.moveTo(containers);
                     console.log(creep.name + ": bring to container");
                 }
-               
+
             } else {
                 roleRepairer.run(creep);
                 console.log(creep.name + ":  idle");
             }
         }
-           
+
         else {
 
             // find dropped energy in the room and pickup rather than from source (in case a creep dies somewhere in the room)
@@ -77,7 +78,7 @@ module.exports = {
                 if(creep.withdraw(containers, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(containers);
                 }
-                
+
             }*/ else {
                 //console.log(creep.name + ":" + creep.memory.role + ": harvests from source");
                 // if creep is supposed to harvest energy from source
