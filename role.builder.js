@@ -49,7 +49,15 @@ module.exports = {
                 }
 
             } else {
-                console.log("harvests from source: "  + creep.name);
+                if (droppedResources != undefined) {
+                    if (creep.pickup(droppedResources) == ERR_NOT_IN_RANGE) {
+                        // move towards the source
+                        creep.moveTo(droppedResources);
+                        console.log(creep.name + " move to dropped resources");
+                    }
+
+                }
+               /* console.log("harvests from source: "  + creep.name);
                 // if creep is supposed to harvest energy from source
                 //console.log("Drop res is undefined");
                 // find closest source
@@ -58,7 +66,7 @@ module.exports = {
                 if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                     // move towards the source
                     creep.moveTo(source);
-                }
+                }*/
            }
         }
     }

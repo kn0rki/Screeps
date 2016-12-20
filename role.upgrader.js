@@ -42,11 +42,10 @@ module.exports = {
                 }
 
             } else {
-                
+
                 // use energy containers before source
                 var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType == STRUCTURE_CONTAINER
-                                && s.store[RESOURCE_ENERGY] > 0
                 });
 
                  if (containers != undefined) {
@@ -55,7 +54,17 @@ module.exports = {
                         creep.moveTo(containers);
                     }
 
-                } //else {
+                }
+                creep.moveTo(9,38);
+                var posX = creep.pos.x;
+                var posY = creep.pos.y;
+
+                if(posX == 9 && posY == 38) {
+                    console.log(creep.name + "  | " +posX+ "," +posY);
+                    var picked = creep.pickup(droppedResources);
+                    console.log(creep.name +" picked " +picked );
+                }
+                //else {
                 //     console.log("harvests from source: "+ creep.memory.role +" " + creep.name);
                 //    // if creep is supposed to harvest energy from source
                 //    //console.log("Drop res is undefined");

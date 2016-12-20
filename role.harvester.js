@@ -8,7 +8,7 @@ module.exports = {
             creep.memory.working = false;
         }
             // if creep is harvesting energy but is full
-        else if (creep.memory.working == false && creep.carry.energy == creep.carryCapacity) {
+        else if (creep.memory.working == false && creep.carry.energy > 0) {
             // switch state
             creep.memory.working = true;
         }
@@ -68,13 +68,15 @@ module.exports = {
             });
 
             // find closest source
-            var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+            var source = Game.getObjectById(creep.memory.id)
             // try to harvest energy, if the source is not in range
+
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 // move towards the source
                 creep.moveTo(source);
 
             }
+
         }
     }
 };

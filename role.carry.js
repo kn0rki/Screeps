@@ -2,12 +2,13 @@
 module.exports = {
     // a function to run the logic for this role
     run: function (creep) {
-
+        var posX = creep.pos.x;
+        var posY = creep.pos.y;
         var otherCarry = creep.pos.findInRange(FIND_MY_CREEPS,1, {
                 filter: (oc) => (oc.memory.role == "carry")
              });
              for(var i in otherCarry){
-                console.log(i);
+                //console.log(i);
         }
 
         // if creep is bringing energy to the spawn or an extension but has no energy left
@@ -50,7 +51,19 @@ module.exports = {
 
                 if (creep.transfer(containers, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     // move towards it
-                    creep.moveTo(containers);
+                   creep.moveTo(containers);
+                }
+            } else {
+                if(!(creep.energy == 0) ){
+                    creep.moveTo(9,37);
+                    console.log("energy not 0");
+                }
+                console.log(creep.name + "  | " +posX+ "," +posY);
+                if(posX == 9 && posY == 37) {
+                    creep.drop(RESOURCE_ENERGY);
+                   // console.log(creep.name + " dropped");
+                    creep.memory.gohome = true;
+
                 }
             }
         } else {
@@ -63,10 +76,18 @@ module.exports = {
             var droppedResources = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
             // use energy containers before source
             if (droppedResources != undefined) {
-                if (creep.pickup(droppedResources) == ERR_NOT_IN_RANGE) {
+                if(creep.memory.gohome != true){
+                    if (creep.pickup(droppedResources) == ERR_NOT_IN_RANGE) {
                     // move towards the source
                     creep.moveTo(droppedResources);
-                    console.log(creep.name + " move to dropped resources");
+                    //console.log(creep.name + " move to dropped resources");
+                    }
+                } else {
+                    creep.moveTo(25,25);
+                    if(posX == 25 && posY == 25) {
+                        creep.memory.gohome = false;
+                        //console.log(creep.name + " gohome false");
+                    }
                 }
                 //if any containers found
             }/* else if (containers != undefined) {
@@ -75,6 +96,7 @@ module.exports = {
                     creep.moveTo(containers);
                 }
             }*/
+
         }
     }
 };

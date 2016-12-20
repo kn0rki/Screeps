@@ -1,4 +1,5 @@
 // import modules
+require('functions');
 require('prototype.spawn')();
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
@@ -8,6 +9,11 @@ var roleTower   = require('tower');
 var roleCarry   = require('role.carry');
 
 module.exports.loop = function () {
+    // bind harvester to an active source.
+    var allSources = Game.rooms.E72S39.find(FIND_SOURCES_ACTIVE);
+
+
+
 
     roleTower.run("E72S39");
     // check for memory entries of died creeps by iterating over Memory.creeps
@@ -21,6 +27,7 @@ module.exports.loop = function () {
 
     // for every creep name in Game.creeps
     for (let name in Game.creeps) {
+
         // get the creep object
         var creep = Game.creeps[name];
 
@@ -42,7 +49,9 @@ module.exports.loop = function () {
         else if (creep.memory.role == 'carry') {
             roleCarry.run(creep);
         }
-
+        else if (creep.memory.role == 'upgrader') {
+            roleUpgrader.run(creep);
+        }
 
 
        /* var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -57,9 +66,9 @@ module.exports.loop = function () {
     // setup some minimum numbers for different roles
     var minimumNumberOfHarvesters = 2;
     var minimumNumberOfUpgraders = 1;
-    var minimumNumberOfBuilders = 1;
+    var minimumNumberOfBuilders = 2;
     var minimumNumberOfRepairers = 1;
-    var minimumNumberOfCarrier = 6;
+    var minimumNumberOfCarrier = 1;
 
     // count the number of creeps alive for each role
     // _.sum will count the number of properties in Game.creeps filtered by the
@@ -73,16 +82,25 @@ module.exports.loop = function () {
     var energy = Game.spawns.Spawn1.room.energyCapacityAvailable;
     var name = undefined;
 
+    // define which source the harveste go to.
+    if(numberOfHarvesters % 1) {
+        var sourceid = allSources[0].id;
+
+    } else {
+        var sourceid = allSources[1].id;
+    }
+
+
     // if not enough harvesters
     if (numberOfHarvesters < minimumNumberOfHarvesters) {
         // try to spawn one
-        name = Game.spawns.Spawn1.createCustomCreep(energy, 'harvester');
+        name = Game.spawns.Spawn1.createCustomCreep(energy, 'harvester', sourceid);
 
         // if spawning failed and we have no harvesters left
         if (name == ERR_NOT_ENOUGH_ENERGY && numberOfHarvesters == 0) {
             // spawn one with what is available
             name = Game.spawns.Spawn1.createCustomCreep(
-                Game.spawns.Spawn1.room.energyAvailable, 'harvester');
+                Game.spawns.Spawn1.room.energyAvailable, 'harvester', sourceid);
         }
     }
     else if (numberOfCarriers < minimumNumberOfCarrier) {
