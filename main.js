@@ -10,12 +10,12 @@ var roleCarry   = require('role.carry');
 
 module.exports.loop = function () {
     // bind harvester to an active source.
-    var allSources = Game.rooms.E72S39.find(FIND_SOURCES_ACTIVE);
+    var allSources = Game.rooms.E75S38.find(FIND_SOURCES);
 
 
 
 
-    roleTower.run("E72S39");
+    roleTower.run("E75S38");
     // check for memory entries of died creeps by iterating over Memory.creeps
     for (let name in Memory.creeps) {
         // and checking if the creep is still alive
@@ -61,33 +61,38 @@ module.exports.loop = function () {
         for (let foo in containers) {
             console.log(_.sum(foo.store + "/" + foo.storageCapacity));
         };*/
+        roleTower.heal("E75S38",creep);
     }
 
     // setup some minimum numbers for different roles
-    var minimumNumberOfHarvesters = 2;
+    var minimumNumberOfHarvesters = 6;
     var minimumNumberOfUpgraders = 1;
-    var minimumNumberOfBuilders = 2;
+    var minimumNumberOfBuilders = 1;
     var minimumNumberOfRepairers = 1;
-    var minimumNumberOfCarrier = 1;
+    var minimumNumberOfCarrier = 0;
 
     // count the number of creeps alive for each role
     // _.sum will count the number of properties in Game.creeps filtered by the
     //  arrow function, which checks for the creep being a harvester
     var numberOfHarvesters = _.sum(Game.creeps, (c) => c.memory.role == 'harvester');
-    var numberOfUpgraders = _.sum(Game.creeps, (c) => c.memory.role == 'upgrader');
-    var numberOfBuilders = _.sum(Game.creeps, (c) => c.memory.role == 'builder');
-    var numberOfRepairers = _.sum(Game.creeps, (c) => c.memory.role == 'repairer');
-    var numberOfCarriers = _.sum(Game.creeps, (c) => c.memory.role == 'carry');
+    var numberOfUpgraders =  _.sum(Game.creeps, (c) => c.memory.role == 'upgrader');
+    var numberOfBuilders =   _.sum(Game.creeps, (c) => c.memory.role == 'builder');
+    var numberOfRepairers =  _.sum(Game.creeps, (c) => c.memory.role == 'repairer');
+    var numberOfCarriers =   _.sum(Game.creeps, (c) => c.memory.role == 'carry');
+    var numberOfHarvestersSource0 = _.sum(Game.creeps, (c) => (c.memory.role == 'harvester') && (c.memory.id == allSources[0].id)  );
+    var numberOfHarvestersSource1 = _.sum(Game.creeps, (c) => (c.memory.role == 'harvester') && (c.memory.id == allSources[1].id)  );
 
+    //console.log(numberOfHarvestersSource0 + " " + numberOfHarvestersSource1);
     var energy = Game.spawns.Spawn1.room.energyCapacityAvailable;
     var name = undefined;
 
-    // define which source the harveste go to.
-    if(numberOfHarvesters % 1) {
+    // define which source the harvester go to.
+    if((numberOfHarvestersSource1 > 2) && (numberOfHarvestersSource1 < 4)) {
         var sourceid = allSources[0].id;
-
+       // console.log("1 "+numberOfHarvestersSource0 + "/"+numberOfHarvestersSource1 + " - " + sourceid +" ("+ allSources[0].id + " | "+ allSources[1].id + ")");
     } else {
         var sourceid = allSources[1].id;
+       //console.log("2 "+numberOfHarvestersSource0 + "/"+numberOfHarvestersSource1 + " - " + sourceid +" ("+ allSources[0].id + " | "+ allSources[1].id + ")");
     }
 
 
@@ -105,7 +110,7 @@ module.exports.loop = function () {
     }
     else if (numberOfCarriers < minimumNumberOfCarrier) {
         // try to spawn one
-        name = Game.spawns.Spawn1.createCustomCreep(energy, 'carry');
+        name = Game.spawns.Spawn1.createCustomCreep(energy, 'carry', sourceid);
     }
         // if not enough upgraders
     else if (numberOfUpgraders < minimumNumberOfUpgraders) {

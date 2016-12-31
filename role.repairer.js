@@ -26,6 +26,13 @@ module.exports = {
                 filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL
             });
 
+            var wall = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                // the second argument for findClosestByPath is an object which takes
+                // a property called filter which can be a function
+                // we use the arrow operator to define it
+                filter: (s) => s.hits < s.hitsMax && s.structureType == STRUCTURE_WALL
+            });
+
             // if we find one
             if (structure != undefined) {
                 // try to repair it, if it is out of range
@@ -33,9 +40,13 @@ module.exports = {
                     // move towards it
                     creep.moveTo(structure);
                 }
-            }
-                // if we can't fine one
-            else {
+            } else if(wall != undefined) {
+                console.log("wall found");
+                if (creep.repair(wall) == ERR_NOT_IN_RANGE) {
+                    // move towards it
+                    creep.moveTo(wall);
+                }
+            } else {
                 // look for construction sites
                 roleBuilder.run(creep);
             }
@@ -44,8 +55,7 @@ module.exports = {
         else {
             // container search
             var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (s) => s.structureType == STRUCTURE_CONTAINER
-                            && s.store[RESOURCE_ENERGY] > 0
+                filter: (s) => s.structureType == STRUCTURE_STORAGE
             });
             // use energy containers before source
             if (containers != undefined) {
@@ -55,11 +65,9 @@ module.exports = {
                 }
 
             } else {
-               console.log("harvests from source: "+ creep.memory.role +" " + creep.name);
-               // if creep is supposed to harvest energy from source
-               //console.log("Drop res is undefined");
+                 // if creep is supposed to harvest energy from source
                // find closest source
-               var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+               var source = Game.getObjectById("5836b8e78b8b9619519f2dde");
                // try to harvest energy, if the source is not in range
                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                    // move towards the source

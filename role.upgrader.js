@@ -16,12 +16,11 @@ module.exports = {
         if (creep.memory.working == true) {
             // instead of upgraderController we could also use:
             // if (creep.transfer(creep.room.controller, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-
+               // var foo = creep.moveTo(9,38);
             // try to upgrade the controller
-            if (creep.upgradeController(Game.rooms.E72S39.controller) == ERR_NOT_IN_RANGE) {
+            if (creep.upgradeController(Game.rooms.E75S38.controller) == ERR_NOT_IN_RANGE) {
                 // if not in range, move towards the controller
-                creep.moveTo(Game.rooms.E72S39.controller);
-                //console.log(creep.name + ":" + creep.memory.role + ": move to controller");
+                creep.moveTo(Game.rooms.E75S38.controller);
             }
 
         }
@@ -31,50 +30,44 @@ module.exports = {
             var droppedResources = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
             // use energy containers before source
             var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (s) => s.structureType == STRUCTURE_CONTAINER
-                            && s.store[RESOURCE_ENERGY] > 0
+                filter: (s) => (s.structureType == STRUCTURE_STORAGE)
+
             });
 
              if (containers != undefined) {
-                //console.log(creep.name + ":" + creep.memory.role + ": pickup from container");
                 if (creep.withdraw(containers, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(containers);
                 }
-
             } else {
-
                 // use energy containers before source
-                var containers = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                    filter: (s) => s.structureType == STRUCTURE_CONTAINER
-                });
+
 
                  if (containers != undefined) {
-                     //console.log(creep.name + ":" + creep.memory.role + " pickup from container");
                     if (creep.withdraw(containers, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(containers);
                     }
 
-                }
-                creep.moveTo(9,38);
+                 }
+               // console.log(creep.name + ":" + creep.memory.role + ": ll");
+               // var foo = creep.moveTo(9,38);
+               // console.log(foo + "----");
                 var posX = creep.pos.x;
                 var posY = creep.pos.y;
 
-                if(posX == 9 && posY == 38) {
-                    console.log(creep.name + "  | " +posX+ "," +posY);
-                    var picked = creep.pickup(droppedResources);
-                    console.log(creep.name +" picked " +picked );
-                }
-                //else {
-                //     console.log("harvests from source: "+ creep.memory.role +" " + creep.name);
-                //    // if creep is supposed to harvest energy from source
-                //    //console.log("Drop res is undefined");
-                //    // find closest source
-                //    var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-                //    // try to harvest energy, if the source is not in range
-                //    if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                //        // move towards the source
-                //        creep.moveTo(source);
-                //    }
+               // if(posX == 9 && posY == 38) {
+                  //  console.log(creep.name + ":" + creep.memory.role + " pickup from container");
+                    //var picked = creep.pickup(droppedResources);
+                /*} else {
+                     //console.log("harvests from source: " + creep.name);
+                    // if creep is supposed to harvest energy from source
+                    //console.log("Drop res is undefined");
+                    // find closest source*/
+                    var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+                    // try to harvest energy, if the source is not in range
+                    if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                        // move towards the source
+                        creep.moveTo(source);
+                    }
                 //}
             }
         }
